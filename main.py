@@ -37,7 +37,7 @@ class MyWindow(QMainWindow):
         # 创建PLC实例
         siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
         # 获取扫码信息
-        barcode = self.Ui_MainWindow.lineEdit_scanning.text()
+        barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-4:]
         # 清空扫描区
         self.Ui_MainWindow.lineEdit_scanning.clear()
         # 显示当前已扫描的条码
