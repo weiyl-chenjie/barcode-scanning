@@ -7,7 +7,7 @@
 # Python自带库
 import sys
 # 第三方库
-from PySide2.QtWidgets import QMainWindow, QApplication
+from PySide2.QtWidgets import QMainWindow, QApplication, QMessageBox
 # 自己的包
 from config import Config
 from HslCommunication import SiemensS7Net
@@ -20,7 +20,6 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         self.Ui_MainWindow = Ui_MainWindow()
         self.Ui_MainWindow.setupUi(self)
-        self.Ui_MainWindow.label_status.setText('等待扫码...')
         self.Ui_MainWindow.lineEdit_scanning.clear()
         self.Ui_MainWindow.lineEdit_previous_barcode.clear()
 
@@ -29,35 +28,31 @@ class MyWindow(QMainWindow):
         self.IP = self.conf.read_config('PLC', 'IP')
         self.Ui_MainWindow.lineEdit_IP.setText(self.IP)
 
+        # 创建PLC实例
+        self.siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
+        if self.siemens.ConnectServer().IsSuccess:  # 连接成功
+            self.Ui_MainWindow.label_status.setText('等待扫码...')
+        else:
+            QMessageBox.critical(self, '错误！', 'PLC连接失败')
+            self.Ui_MainWindow.label_status.setText('PLC连接失败！')
+            self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 0, 0);")
+
     # 槽函数
     def barcode_scanning(self):
         self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 255, 127);")
         self.Ui_MainWindow.label_status.setText('已扫码，正在处理...')
         QApplication.processEvents()
-        # 创建PLC实例
-        siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
+
         # 获取扫码信息
-        barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-4:]
+        barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-5:]
         # 清空扫描区
         self.Ui_MainWindow.lineEdit_scanning.clear()
         # 显示当前已扫描的条码
         self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode)
+        # 检测
         # 发送信息给激光刻字机
 
         # 通知PLC可以刻字了
-        # 建立PLC长连接
-        self.Ui_MainWindow.label_status.setText('正在连接PLC...')
-        QApplication.processEvents()
-        if siemens.ConnectServer().IsSuccess:  # 连接成功
-            siemens.WriteBool("W0.0")
-            siemens.ConnectClose()  # 关闭PLC连接
-            print('等待扫码')
-            self.Ui_MainWindow.label_status.setText('等待扫码...')
-
-        else:  # 若连接失败
-            self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 0, 0);")
-            self.Ui_MainWindow.label_status.setText('PLC连接失败!')
-        QApplication.processEvents()
 
     def change_ip(self):
         self.IP = self.Ui_MainWindow.lineEdit_IP.text()

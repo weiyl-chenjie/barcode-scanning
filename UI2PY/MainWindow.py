@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'MainWindow.ui',
 # licensing of 'MainWindow.ui' applies.
 #
-# Created: Mon Oct 14 14:50:14 2019
+# Created: Wed Oct 23 14:36:47 2019
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,6 +14,9 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1229, 854)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/logo/logo64.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lineEdit_scanning = QtWidgets.QLineEdit(self.centralwidget)
@@ -64,13 +67,13 @@ class Ui_MainWindow(object):
         self.lineEdit_previous_barcode.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_previous_barcode.setReadOnly(True)
         self.lineEdit_previous_barcode.setObjectName("lineEdit_previous_barcode")
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(670, 610, 451, 30))
-        self.widget.setObjectName("widget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.layoutWidget.setGeometry(QtCore.QRect(670, 610, 451, 30))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(self.widget)
+        self.label = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(75)
@@ -78,11 +81,11 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.lineEdit_IP = QtWidgets.QLineEdit(self.widget)
+        self.lineEdit_IP = QtWidgets.QLineEdit(self.layoutWidget)
         self.lineEdit_IP.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_IP.setObjectName("lineEdit_IP")
         self.horizontalLayout.addWidget(self.lineEdit_IP)
-        self.pushButton_change_ip = QtWidgets.QPushButton(self.widget)
+        self.pushButton_change_ip = QtWidgets.QPushButton(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(50)
@@ -92,7 +95,7 @@ class Ui_MainWindow(object):
 "color: rgb(200, 194, 15);")
         self.pushButton_change_ip.setObjectName("pushButton_change_ip")
         self.horizontalLayout.addWidget(self.pushButton_change_ip)
-        self.pushButton_plc_connect_test = QtWidgets.QPushButton(self.widget)
+        self.pushButton_plc_connect_test = QtWidgets.QPushButton(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(50)
@@ -118,7 +121,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "条码扫描", None, -1))
         self.label_scanning.setText(QtWidgets.QApplication.translate("MainWindow", "条码扫描:", None, -1))
         self.label_previous_barcode.setText(QtWidgets.QApplication.translate("MainWindow", "上次条码:", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("MainWindow", "PLC的IP:", None, -1))
@@ -126,6 +129,7 @@ class Ui_MainWindow(object):
         self.pushButton_change_ip.setText(QtWidgets.QApplication.translate("MainWindow", "设置为当前值", None, -1))
         self.pushButton_plc_connect_test.setText(QtWidgets.QApplication.translate("MainWindow", "测试连接", None, -1))
 
+import images_rc
 
 if __name__ == "__main__":
     import sys
