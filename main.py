@@ -12,7 +12,9 @@ import re
 # 第三方库
 from PySide2.QtWidgets import QMainWindow, QApplication, QMessageBox
 from PySide2.QtCore import QThread, Signal
-import win32api, win32con, win32gui
+import win32api
+import win32con
+import win32gui
 # 自己的包
 from config import Config
 from HslCommunication import SiemensS7Net
@@ -33,31 +35,37 @@ class MyWindow(QMainWindow):
         self.Ui_MainWindow.lineEdit_IP.setText(self.IP)
 
         self._thread = MyThread()
+        if self._thread.connect_to_plc:
+            pass
+        else:
+            self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 0, 0);")
+            self.Ui_MainWindow.label_status.setText('PLC连接失败!')
         self._thread.start()
 
     # 槽函数
     def barcode_scanning(self):
-        self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 255, 127);")
-        self.Ui_MainWindow.label_status.setText('已扫码，正在处理...')
-        QApplication.processEvents()
+        if self._thread.connect_to_plc:  # 如果PLC连接成功
+            self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 255, 127);")
+            self.Ui_MainWindow.label_status.setText('已扫码，正在处理...')
+            QApplication.processEvents()
 
-        # 获取扫码信息
-        barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-5:]
-        # 清空扫描区
-        self.Ui_MainWindow.lineEdit_scanning.clear()
-        # 显示当前已扫描的条码
-        self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode)
+            # 获取扫码信息
+            barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-5:]
+            # 清空扫描区
+            self.Ui_MainWindow.lineEdit_scanning.clear()
+            # 显示当前已扫描的条码
+            self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode)
 
-        # 将刻字内容发送到.txt文件
-        txtPath = r"D:\刻字.txt"
-        if not os.path.exists(txtPath):  # 如果文件不存在，则创建相应文件并输入刻字内容
-            with open(txtPath, "w", encoding="utf-8") as f:
-                f.write(barcode)
-        else:  # 如果文件已存在，则清空文件内容，并输入新的刻字内容
-            with open(txtPath, "w+", encoding="utf-8") as f:
-                f.write(barcode)
+            # 将刻字内容发送到.txt文件
+            txtPath = r"D:\刻字.txt"
+            if not os.path.exists(txtPath):  # 如果文件不存在，则创建相应文件并输入刻字内容
+                with open(txtPath, "w", encoding="utf-8") as f:
+                    f.write(barcode)
+            else:  # 如果文件已存在，则清空文件内容，并输入新的刻字内容
+                with open(txtPath, "w+", encoding="utf-8") as f:
+                    f.write(barcode)
 
-        self._thread.working = True
+            self._thread.working = True
 
     def change_ip(self):
         self.IP = self.Ui_MainWindow.lineEdit_IP.text()
@@ -68,10 +76,12 @@ class MyWindow(QMainWindow):
         self.Ui_MainWindow.label_status.setText('正在连接PLC...')
         QApplication.processEvents()
         # 创建PLC实例
-        siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
-        if siemens.ConnectServer().IsSuccess:  # 连接成功
+        self._thread.siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
+        if self._thread.siemens.ConnectServer().IsSuccess:  # 连接成功
             self.Ui_MainWindow.label_status.setText('PLC连接成功！')
+            self._thread.connect_to_plc = True
         else:  # 若连接失败
+            self._thread.connect_to_plc = False
             self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 0, 0);")
             self.Ui_MainWindow.label_status.setText('PLC连接失败!')
         QApplication.processEvents()
@@ -129,13 +139,15 @@ class MyThread(QThread):
 
         self.conf = Config()
         self.IP = self.conf.read_config('PLC', 'IP')
+        # 零件放到位，刻字延迟时间
         self.delay = int(self.conf.read_config('laser', 'delay'))
+        self.cW = cWindow()
         # 创建PLC实例
         self.siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
         if self.siemens.ConnectServer().IsSuccess:  # 连接成功
-            pass
+            self.connect_to_plc = True
         else:
-            QMessageBox.critical(self, '错误！', 'PLC连接失败')
+            self.connect_to_plc = False
 
     def __del__(self):
         self.working = False
@@ -154,7 +166,7 @@ class MyThread(QThread):
         # 刻字完成后，将本程序前置
         print("刻字完成，将读钥匙程序前置")
         self.cW.find_window_regex("扫码")  # 找到指定窗口
-        self.cW.Maximize()  # 窗口最大化
+        # self.cW.Maximize()  # 窗口最大化
         self.cW.SetAsForegroundWindow()  # 窗口前置
 
         # 刻字完成，将标志位置为False，等待下一次触发
