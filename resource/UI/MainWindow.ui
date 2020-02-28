@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1229</width>
+    <width>927</width>
     <height>854</height>
    </rect>
   </property>
@@ -21,10 +21,10 @@
    <widget class="QLineEdit" name="lineEdit_scanning">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>80</y>
-      <width>661</width>
-      <height>141</height>
+      <x>340</x>
+      <y>30</y>
+      <width>541</width>
+      <height>118</height>
      </rect>
     </property>
     <property name="font">
@@ -34,7 +34,7 @@
      </font>
     </property>
     <property name="text">
-     <string/>
+     <string>q123</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -44,15 +44,15 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>80</y>
-      <width>361</width>
-      <height>131</height>
+      <y>40</y>
+      <width>300</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>华文楷体</family>
-      <pointsize>50</pointsize>
+      <pointsize>39</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -65,8 +65,8 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>450</y>
-      <width>1081</width>
+      <y>520</y>
+      <width>841</width>
       <height>121</height>
      </rect>
     </property>
@@ -90,30 +90,30 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>260</y>
-      <width>361</width>
-      <height>131</height>
+      <y>200</y>
+      <width>300</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>华文楷体</family>
-      <pointsize>50</pointsize>
+      <pointsize>39</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="text">
-     <string>上次条码:</string>
+     <string>刻印条码:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_previous_barcode">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>260</y>
-      <width>661</width>
-      <height>141</height>
+      <x>340</x>
+      <y>190</y>
+      <width>541</width>
+      <height>118</height>
      </rect>
     </property>
     <property name="font">
@@ -138,8 +138,8 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>610</y>
+      <x>430</x>
+      <y>680</y>
       <width>451</width>
       <height>30</height>
      </rect>
@@ -207,13 +207,62 @@ color: rgb(200, 194, 15);</string>
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_next_barcode">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>360</y>
+      <width>300</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>华文楷体</family>
+      <pointsize>39</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>待刻条码:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_next_barcode">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>350</y>
+      <width>541</width>
+      <height>118</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>华文楷体</family>
+      <pointsize>60</pointsize>
+     </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1229</width>
+     <width>927</width>
      <height>26</height>
     </rect>
    </property>

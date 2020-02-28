@@ -4,7 +4,7 @@
 
 # Edition:V1.0.0
 
-# Python自带库
+# 自带库
 import os
 import sys
 from time import sleep
@@ -29,10 +29,14 @@ class MyWindow(QMainWindow):
         self.Ui_MainWindow.setupUi(self)
         self.Ui_MainWindow.lineEdit_scanning.clear()
         self.Ui_MainWindow.lineEdit_previous_barcode.clear()
+        self.Ui_MainWindow.lineEdit_next_barcode.clear()
 
         self.conf = Config()
         self.IP = self.conf.read_config('PLC', 'IP')
+        self.ezdName = self.conf.read_config('laser', 'ezdname')
         self.Ui_MainWindow.lineEdit_IP.setText(self.IP)
+
+        self.cW = cWindow()
 
         self._thread = MyThread()
         if self._thread.connect_to_plc:
@@ -42,30 +46,38 @@ class MyWindow(QMainWindow):
             self.Ui_MainWindow.label_status.setText('PLC连接失败!')
         self._thread.start()
 
+        self.working_barcode = ''  # 工作中的钥匙条码
+        self.waiting_barcode = ''  # 在挡停位停留的钥匙条码
+        self.temp_barcode = ''  # 暂存的barcode
+
+        # 绑定刻字函数
+        self._thread.signal.connect(self.laser_marking)
+
     # 槽函数
     def barcode_scanning(self):
         if self._thread.connect_to_plc:  # 如果PLC连接成功
             self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 255, 127);")
-            self.Ui_MainWindow.label_status.setText('已扫码，正在处理...')
+            self.Ui_MainWindow.label_status.setText('已扫码，等待刻字信号...')
             QApplication.processEvents()
 
             # 获取扫码信息
             barcode = self.Ui_MainWindow.lineEdit_scanning.text()[-5:]
             # 清空扫描区
             self.Ui_MainWindow.lineEdit_scanning.clear()
-            # 显示当前已扫描的条码
-            self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode)
-
-            # 将刻字内容发送到.txt文件
-            txtPath = r"D:\刻字.txt"
-            if not os.path.exists(txtPath):  # 如果文件不存在，则创建相应文件并输入刻字内容
-                with open(txtPath, "w", encoding="utf-8") as f:
-                    f.write(barcode)
-            else:  # 如果文件已存在，则清空文件内容，并输入新的刻字内容
-                with open(txtPath, "w+", encoding="utf-8") as f:
-                    f.write(barcode)
-
-            self._thread.working = True
+            # # 显示当前已扫描的条码
+            # self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode)
+            # print(barcode)
+            if self.working_barcode == '':  # 如果working_barcode为空，则将条码赋值给working_barcode
+                self.working_barcode = barcode
+                self.Ui_MainWindow.lineEdit_next_barcode.setText(self.working_barcode)
+            elif self.waiting_barcode == '':  # 如果working_barcode不为空，且waiting_barcode为空，则将条码赋值给waiting_barcode
+                if barcode == self.working_barcode:  # 如果重复扫码
+                    pass
+                else:
+                    self.waiting_barcode = barcode
+                    self.Ui_MainWindow.lineEdit_next_barcode.setText(self.working_barcode + '   ' + self.waiting_barcode)
+            else:
+                self.temp_barcode = barcode  # 否则将条码赋值给temp_barcode
 
     def change_ip(self):
         self.IP = self.Ui_MainWindow.lineEdit_IP.text()
@@ -87,6 +99,51 @@ class MyWindow(QMainWindow):
         QApplication.processEvents()
 
     # 功能函数
+    # 将刻字内容发送到.txt文件
+    def send_barcode(self):
+        txtPath = r"D:\刻字.txt"
+        barcode_to_laser = self.working_barcode
+        self.working_barcode = self.waiting_barcode
+        self.waiting_barcode = ''
+
+        if not os.path.exists(txtPath):  # 如果文件不存在，则创建相应文件并输入刻字内容
+            with open(txtPath, "w", encoding="utf-8") as f:
+                f.write(barcode_to_laser)
+        else:  # 如果文件已存在，则清空文件内容，并输入新的刻字内容
+            with open(txtPath, "w+", encoding="utf-8") as f:
+                f.write(barcode_to_laser)
+
+        # 显示当前刻印的条码
+        self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode_to_laser)
+        # 显示待刻印的条码
+        self.Ui_MainWindow.lineEdit_next_barcode.setText(self.working_barcode)
+
+    # 激光刻字流程函数--通过调用刻字程序控制刻字机刻字
+    def laser_marking(self):
+        self.send_barcode()
+        # 将刻字程序前置，并按下F2进行刻字
+        print("前置激光刻字机程序:" + self.ezdName)
+        self.cW.find_window_regex(self.ezdName)  # 找到指定窗口
+        self.cW.Maximize()  # 窗口最大化
+        self.cW.SetAsForegroundWindow()  # 窗口前置
+        print("激光机开始刻字")
+        win32api.keybd_event(113, 0, 0, 0)  # 按下F2 刻字机刻字
+        win32api.keybd_event(113, 0, win32con.KEYEVENTF_KEYUP, 0)  # 松开F2
+        sleep(1)
+        # 刻字完成后，将本程序前置
+        print("刻字完成，将扫码程序前置")
+        self.cW.find_window_regex("条码扫描")  # 找到指定窗口
+        # self.cW.Maximize()  # 窗口最大化
+        self.cW.SetAsForegroundWindow()  # 窗口前置
+
+        # 刻字完成，将标志位置为False，等待下一次触发
+        self._thread.working = False
+        # 刻字完成，将暂停标志置为True，等待下一次触发
+        self._thread.pause = True
+
+        self.Ui_MainWindow.label_status.setStyleSheet("background-color: rgb(255, 255, 127);")
+        self.Ui_MainWindow.label_status.setText('刻字完成,请取走零件...')
+        QApplication.processEvents()
 
 
 #  定义窗口类，用于窗口前置等操作
@@ -131,17 +188,18 @@ class cWindow:
 
 
 class MyThread(QThread):
-    signal = Signal()
+    signal = Signal(bool)
 
     def __init__(self):
         super(MyThread, self).__init__()
-        self.working = False  # 工作状态标志量
+        self.working = True  # 工作状态标志量
+        self.pause = False  # 刻字之后暂停
 
         self.conf = Config()
         self.IP = self.conf.read_config('PLC', 'IP')
         # 零件放到位，刻字延迟时间
         self.delay = int(self.conf.read_config('laser', 'delay'))
-        self.cW = cWindow()
+
         # 创建PLC实例
         self.siemens = SiemensS7Net(SiemensPLCS.S200Smart, self.IP)
         if self.siemens.ConnectServer().IsSuccess:  # 连接成功
@@ -149,45 +207,49 @@ class MyThread(QThread):
         else:
             self.connect_to_plc = False
 
-    def __del__(self):
-        self.working = False
-
-    # 激光刻字流程函数--通过调用刻字程序控制刻字机刻字
-    def laser_marking(self):
-        # 将刻字程序前置，并按下F2进行刻字
-        print("前置激光刻字机程序:" + self.ezdName)
-        self.cW.find_window_regex(self.ezdName)  # 找到指定窗口
-        self.cW.Maximize()  # 窗口最大化
-        self.cW.SetAsForegroundWindow()  # 窗口前置
-        print("激光机开始刻字")
-        win32api.keybd_event(113, 0, 0, 0)  # 按下F2 刻字机刻字
-        win32api.keybd_event(113, 0, win32con.KEYEVENTF_KEYUP, 0)  # 松开F2
-        sleep(1)
-        # 刻字完成后，将本程序前置
-        print("刻字完成，将读钥匙程序前置")
-        self.cW.find_window_regex("扫码")  # 找到指定窗口
-        # self.cW.Maximize()  # 窗口最大化
-        self.cW.SetAsForegroundWindow()  # 窗口前置
-
-        # 刻字完成，将标志位置为False，等待下一次触发
-        self.working = False
+    # def __del__(self):
+    #     self.working = False
 
     def run(self):
         # 进行线程任务
-        while self.working:
-            # 判断是哪个项目,I0.3是转换开关（True代表280B，False代表480B）,待刻印件从右往左依次为I0.0、I0.1、I0.2
-            if self.siemens.ReadBool("I0.3").Content:  # 如果I0.3为True(即，280B项目--该项目刻字工位需放2个件,I0.0、I0.1)
-                # 判断零件是否到位
-                if self.siemens.ReadBool('I0.0').Content and self.siemens.ReadBool('I0.1').Content:  # 如果零件放到位
-                    sleep(self.delay)
-                    self.laser_marking()
-                else:
-                    print('有零件未放到位')
-            else:  # 如果时是480B项目--该项目刻字工位需放3个件,I0.0、I0.1、I0.2
-                if self.siemens.ReadBool("I0.0").Content and self.siemens.ReadBool("I0.1").Content and self.siemens.ReadBool("I0.2").Content:  # 零件放到位
-                    self.laser_marking()  # 通知刻字机刻字
-                else:
-                    print('有零件未放到位')
+        while True:
+            if self.working:  # 如果处于刻字工作状态
+                # 判断是哪个项目,I0.3是转换开关（True代表280B，False代表480B）,待刻印件从右往左依次为I0.0、I0.1、I0.2
+                if self.siemens.ReadBool("I0.3").Content:  # 如果I0.3为True(即，280B项目--该项目刻字工位需放2个件,I0.0、I0.1)
+                    # 判断零件是否到位
+                    if self.siemens.ReadBool('I0.0').Content and self.siemens.ReadBool('I0.1').Content:  # 如果零件放到位
+                        sleep(self.delay)
+                        self.signal.emit(True)
+                        sleep(5)
+                    else:
+                        pass
+                        # print('有零件未放到位')
+                else:  # 如果时是480B项目--该项目刻字工位需放3个件,I0.0、I0.1、I0.2
+                    if self.siemens.ReadBool("I0.0").Content and self.siemens.ReadBool("I0.1").Content and self.siemens.ReadBool("I0.2").Content:  # 零件放到位
+                        self.signal.emit(True)
+                        sleep(5)
+                    else:
+                        pass
+                        # print('有零件未放到位')
+            elif self.pause:  # 如果处于刻字之后的暂停状态
+                # 判断是哪个项目,I0.3是转换开关（True代表280B，False代表480B）,待刻印件从右往左依次为I0.0、I0.1、I0.2
+                if self.siemens.ReadBool("I0.3").Content:  # 如果I0.3为True(即，280B项目--该项目刻字工位需放2个件,I0.0、I0.1)
+                    # 判断零件是否被拿走
+                    if not self.siemens.ReadBool('I0.0').Content and not self.siemens.ReadBool('I0.1').Content:  # 如果零件都被取走
+                        self.pause = False
+                        self.working = True
+                    else:
+                        pass
+                        # print('有零件未取走')
+                else:  # 如果时是480B项目--该项目刻字工位需放3个件,I0.0、I0.1、I0.2
+                    # 判断零件是否被拿走
+                    if not self.siemens.ReadBool("I0.0").Content and not self.siemens.ReadBool(
+                            "I0.1").Content and not self.siemens.ReadBool("I0.2").Content:  # 如果零件都被取走
+                        self.pause = False
+                        self.working = True
+                    else:
+                        pass
+                        # print('有零件未取走')
 
 
 if __name__ == '__main__':
