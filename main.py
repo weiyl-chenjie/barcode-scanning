@@ -186,7 +186,7 @@ class cWindow:
         win32gui.EnumWindows(self._window_enum_callback_hide, None)
 
     def _window_enum_callback_hide(self, hwnd, unused):
-        if hwnd != self._hwnd: # ignore self
+        if hwnd != self._hwnd:  # ignore self
             # Is the window visible and marked as an always-on-top (topmost) window?
             if win32gui.IsWindowVisible(hwnd) and win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) & win32con.WS_EX_TOPMOST:
                 # Ignore windows of class 'Button' (the Start button overlay) and

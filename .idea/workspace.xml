@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b1aa875a-46e2-4f37-8858-723d27c0073a" name="Default Changelist" comment="初步完成">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b1aa875a-46e2-4f37-8858-723d27c0073a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirement.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirement.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +83,7 @@
       <workItem from="1582858479985" duration="1528000" />
       <workItem from="1604641478547" duration="813000" />
       <workItem from="1604652102915" duration="402000" />
-      <workItem from="1604883595619" duration="868000" />
+      <workItem from="1604883595619" duration="1261000" />
     </task>
     <task id="LOCAL-00001" summary="初步完成">
       <created>1571812643836</created>
@@ -130,7 +127,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582858489717</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="添加记录功能">
+      <created>1604884542481</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1604884542481</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -138,37 +142,42 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="初步完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="初步完成" />
+    <MESSAGE value="添加记录功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加记录功能" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="367" y="0" key="CommitChangelistDialog2" timestamp="1604883707350">
+    <state x="367" y="0" key="CommitChangelistDialog2" timestamp="1604884541601">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="367" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1604883707350" />
+    <state x="367" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1604884541601" />
     <state x="549" y="166" key="FileChooserDialogImpl" timestamp="1604652152579">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="549" y="166" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1604652152579" />
-    <state width="1493" height="208" key="GridCell.Tab.0.bottom" timestamp="1604884149332">
+    <state width="1493" height="208" key="GridCell.Tab.0.bottom" timestamp="1604884776293">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="208" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1604884149332" />
-    <state width="1493" height="208" key="GridCell.Tab.0.center" timestamp="1604884149332">
+    <state width="1493" height="208" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1604884776293" />
+    <state width="1493" height="208" key="GridCell.Tab.0.center" timestamp="1604884776293">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="208" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1604884149332" />
-    <state width="1493" height="208" key="GridCell.Tab.0.left" timestamp="1604884149331">
+    <state width="1493" height="208" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1604884776293" />
+    <state width="1493" height="208" key="GridCell.Tab.0.left" timestamp="1604884776293">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="208" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1604884149331" />
-    <state width="1493" height="208" key="GridCell.Tab.0.right" timestamp="1604884149332">
+    <state width="1493" height="208" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1604884776293" />
+    <state width="1493" height="208" key="GridCell.Tab.0.right" timestamp="1604884776293">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="208" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1604884149332" />
+    <state width="1493" height="208" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1604884776293" />
     <state x="270" y="56" key="SettingsEditor" timestamp="1604652383690">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="270" y="56" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1604652383690" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1604884553886">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1604884553886" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/barcode_scanning_280B$main.coverage" NAME="main Coverage Results" MODIFIED="1604884149316" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
