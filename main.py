@@ -123,7 +123,7 @@ class MyWindow(QMainWindow):
             with open(txtPath, "w+", encoding="utf-8") as f:
                 f.write(barcode_to_laser)
 
-        # barcode存放到数据库中
+        # 刻录的barcode存放到数据库中
         save_barcode_sql = "INSERT INTO barcode(barcode) VALUES('" + barcode_to_laser + "')"
         self.db.insert_query(save_barcode_sql)
         
