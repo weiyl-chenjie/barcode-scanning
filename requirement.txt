@@ -9,6 +9,7 @@ PyAutoGUI==0.9.48
 PyGetWindow==0.0.7
 PyInstaller==3.5
 PyMsgBox==1.0.7
+pyodbc==4.0.30
 pyperclip==1.7.0
 PyRect==0.1.4
 PyScreeze==0.1.24

@@ -20,11 +20,13 @@ from config import Config
 from HslCommunication import SiemensS7Net
 from HslCommunication import SiemensPLCS
 from UI2PY.MainWindow import Ui_MainWindow
+from access import ODBC_MS
 
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
+        self.cur_path = os.getcwd()
         self.Ui_MainWindow = Ui_MainWindow()
         self.Ui_MainWindow.setupUi(self)
         self.Ui_MainWindow.lineEdit_scanning.clear()
@@ -39,6 +41,14 @@ class MyWindow(QMainWindow):
         self.cW = cWindow()
 
         self._thread = MyThread()
+        
+        # 数据库变量
+        self.driver = '{Microsoft Access Driver (*.mdb)}'
+        self.dbq = os.path.join(self.cur_path, "save.mdb")  # 数据库文件路径
+        
+        # 创建数据库实例
+        self.db = ODBC_MS(self.driver, self.dbq)  # 创建数据库连接实例
+        
         if self._thread.connect_to_plc:
             pass
         else:
@@ -113,6 +123,10 @@ class MyWindow(QMainWindow):
             with open(txtPath, "w+", encoding="utf-8") as f:
                 f.write(barcode_to_laser)
 
+        # barcode存放到数据库中
+        save_barcode_sql = "INSERT INTO barcode(barcode) VALUES('" + barcode_to_laser + "')"
+        self.db.insert_query(save_barcode_sql)
+        
         # 显示当前刻印的条码
         self.Ui_MainWindow.lineEdit_previous_barcode.setText(barcode_to_laser)
         # 显示待刻印的条码
